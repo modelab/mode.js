@@ -7,13 +7,13 @@
 
 <a href="http://executable.io/" target="_blank">Mode Lab tools</a> - sandbox of design tools.
 
-### Examples
+#### Examples
 Example files are in the <a href="https://github.com/modelab/mode.js/tree/master/examples" target="_blank">examples</a> directory for this repo.  Additional demos are posted periodically on <a href="http://executable.io/" target="_blank">http://executable.io/</a>.
 
-### Documentation
+#### Documentation
 In-progress documentation is currently stored <a href="http://executable.io/html/mode-js/doc/MODE.html" target="_blank">here</a>.
 
-### Dependencies
+#### Dependencies
 Many of the utility functions are dependent on some of our favorite libraries:
 ##### <a href="http://threejs.org/" target="_blank">THREE.js</a> - we use this for 3D and GPU operations
 Three.js is a cross-browser JavaScript library/API used to create and display animated 3D computer graphics in a web browser. Three.js uses WebGL. The source code is hosted in a repository on GitHub.
