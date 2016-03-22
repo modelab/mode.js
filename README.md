@@ -1,7 +1,7 @@
 # mode.js
-<img src="/img/logo/MODELAB_Logo-Horizontal.png" alt="logo" width= "300"/>
+<a href="http://modelab.is/" target="_blank"><img src="/img/logo/MODELAB_Logo-Horizontal.png" alt="logo" width= "300"/></a>
 
-mode.js an open-sourced project aimed at creating web-based tools for computational design. Our studio is dedicated to building custom parametric models for the web - and this our repository for sharing utility functions and example files.
+<a href="https://github.com/modelab/mode.js">mode.js</a> an open-sourced project aimed at creating web-based tools for computational design. Our studio is dedicated to building custom parametric models for the web - and this our repository for sharing utility functions and example files.
 
 ##### <a href="http://modelab.is/news/" target="_blank">Mode Lab </a> - main site
 ##### <a href="http://executable.io/" target="_blank">Mode Lab tools</a> - sandbox of design tools.
