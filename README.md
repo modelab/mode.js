@@ -1,5 +1,6 @@
 # mode.js
 <img src="/img/logo/MODELAB_Logo-Horizontal.png" alt="logo" width= "300"/>
+
 This is an ongoing open-sourced project which focuses on creating web-based tools for computational design. Our studio is dedicated to building custom parametric models for the web - this our repository for sharing utility functions with example files.
 
 ### Examples
