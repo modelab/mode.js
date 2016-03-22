@@ -17,7 +17,7 @@ Download the [library](https://raw.githubusercontent.com/modelab/mode.js/master/
 Many of the functions build off of existing libraries. Below is an example using objects from <a href="https://github.com/mrdoob/three.js" target="_blank">THREE.js</a>
 ```html
 //define bounding box by plane or normal vector
-//defined by THREE.Geometry and THREE.Plane/THREE.Vector3
+//arguments are THREE.Geometry and THREE.Plane/THREE.Vector3
 var bb = new MODE.boundingBox(mesh.geometry, normalVector); 
 ```
 
