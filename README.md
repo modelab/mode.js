@@ -1,7 +1,8 @@
 # mode.js
+![Mode Lab logo](/img/logo/MODELAB_stout.jpg =150x)
 ### Mode Lab Javascript Library
 This is an ongoing project focused on creating web-based tools for computational design. Our studio is dedicated to building custom parametric models for the web.
-![Mode Lab logo](/img/logo/MODELAB_stout.jpg)
+
 
 ### Dependencies
 Many of the utility functions are dependent on some of our favorite libraries:
