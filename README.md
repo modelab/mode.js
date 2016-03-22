@@ -7,6 +7,19 @@
 
 <a href="http://executable.io/" target="_blank">Mode Lab tools</a> - sandbox of design tools.
 
+#### Usage
+Download the [library](https://raw.githubusercontent.com/modelab/mode.js/master/build/mode.js) and include it in your html.
+
+```html
+<script src="js/mode.js"></script>
+```
+
+Many of the functions build off of existing libraries. Below is an example using objects from <a href="https://github.com/mrdoob/three.js" target="_blank">THREE.js</a>
+```html
+//define bounding box by plane or normal vector
+var bb = new MODE.boundingBox(mesh.geometry, normalVector); //defined by THREE.Geometry and THREE.Plane/THREE.Vector3
+```
+
 #### Examples
 Example files are in the <a href="https://github.com/modelab/mode.js/tree/master/examples" target="_blank">examples</a> directory for this repo.  Additional demos are posted periodically on <a href="http://executable.io/" target="_blank">http://executable.io/</a>.
 
