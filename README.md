@@ -1,5 +1,5 @@
 # mode.js
-<img src="/img/logo/MODELAB_stout.jpg" alt="logo" style="width: 50px;"/>
+<img src="/img/logo/MODELAB_Logo-Horizontal.png" alt="logo" style="width: 50px;"/>
 ### Mode Lab Javascript Library
 This is an ongoing project focused on creating web-based tools for computational design. Our studio is dedicated to building custom parametric models for the web.
 
