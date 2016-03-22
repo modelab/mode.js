@@ -14,7 +14,7 @@ Download the [library](https://raw.githubusercontent.com/modelab/mode.js/master/
 <script src="js/mode.js"></script>
 ```
 
-Many of the functions build off of existing libraries. Below is an example using objects from <a href="https://github.com/mrdoob/three.js" target="_blank">THREE.js</a>
+Many of the functions build off of existing libraries. Below is an example using objects from <a href="https://github.com/mrdoob/three.js" target="_blank">THREE.js</a>.  This is a code snippet from the <a href="http://executable.io/html/mode-js/examples/boundingBox_planeIntersect.html" target="_blank">contoured bunny</a> example.
 ```javascript
 //define bounding box by plane or normal vector
 //arguments are THREE.Geometry and THREE.Plane/THREE.Vector3
