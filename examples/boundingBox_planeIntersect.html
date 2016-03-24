@@ -42,265 +42,287 @@
     <script src="../build/plugins/three.js"></script>
     <script src="../build/plugins/OBJLoader.js"></script>
     <script src="../build/mode.js"></script>
-<!--    <script src="js/contour.min.js"></script>-->
+    <!--    <script src="js/contour.min.js"></script>-->
     <script src="../build/plugins/dat.gui.js"></script>
     <script>
-        var container;
-        var svgName;
-        var counter = 0;
-        var countplus = 0.01;
-        var dashboard;
-        var camera, scene, renderer, bb, scenemesh;
-        var sections;
-        var geo, mesh, transPlane;
-        var mouseX = 0,
-            mouseY = 0;
 
-        var windowHalfX = window.innerWidth / 2;
-        var windowHalfY = window.innerHeight / 2;
+//        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+//            function show_image(src, width, height, alt) {
+//                var img = document.createElement("img");
+//                img.src = src;
+//                img.width = width;
+//                img.height = height;
+//                img.alt = alt;
+//
+//                // This next line will just add it to the <body> tag
+//                document.body.appendChild(img);
+//            }
+//            show_image('../img/mobile/mobile.jpg',
+//                window.innerWidth,
+//                window.innerHeight,
+//                'mobileAlert')
+//
+//        }
+//        else{
+            loadApp();
+//        }
+
+        function loadApp() {
+            var container;
+            var svgName;
+            var counter = 0;
+            var countplus = 0.01;
+            var dashboard;
+            var camera, scene, renderer, bb, scenemesh;
+            var sections;
+            var geo, mesh, transPlane;
+            var mouseX = 0,
+                mouseY = 0;
+
+            var windowHalfX = window.innerWidth / 2;
+            var windowHalfY = window.innerHeight / 2;
 
 
-        init();
-        animate();
+            init();
+            animate();
 
-        var interface = function() {
-            this.Animate = true;
-            this.Speed = 0.01;
-            this.Spacing = 5;
-            this.Contour_Style = "Sections";
-            this.Display_SVG = false;
-        }
+            var interface = function() {
+                this.Animate = false;
+                this.Speed = 0.01;
+                this.Spacing = 5;
+                this.Contour_Style = "Sections";
+                this.Display_SVG = false;
+            }
 
-        window.onload = function() {
-            dashboard = new interface();
-            var gui = new dat.GUI();
-            var globalFolder = gui.addFolder('Global');
-            globalFolder.open();
-            var animBox = globalFolder.add(dashboard, 'Animate').listen();
-            var speedSlider = globalFolder.add(dashboard, 'Speed', 0.0, 0.2).listen();
-            var spaceSlider = globalFolder.add(dashboard, 'Spacing', 2.0, 10.5).listen();
-            var visSlider = globalFolder.add(dashboard, 'Contour_Style', ["Sections", "Surfaces", "Edges"]).listen();
-            var dispBox = globalFolder.add(dashboard, 'Display_SVG').listen();
-            
-            spaceSlider.onFinishChange(function(value){
-                updateSections();
-            })           
-            speedSlider.onChange(function(value) {
-                countplus = value;
-            })
-            dispBox.onChange(function(value) {
-                if (value == false) {
+            window.onload = function() {
+                dashboard = new interface();
+                var gui = new dat.GUI();
+                var globalFolder = gui.addFolder('Global');
+                globalFolder.open();
+                var animBox = globalFolder.add(dashboard, 'Animate').listen();
+                var speedSlider = globalFolder.add(dashboard, 'Speed', 0.0, 0.2).listen();
+                var spaceSlider = globalFolder.add(dashboard, 'Spacing', 2.0, 10.5).listen();
+                var visSlider = globalFolder.add(dashboard, 'Contour_Style', ["Sections", "Surfaces", "Edges"]).listen();
+                var dispBox = globalFolder.add(dashboard, 'Display_SVG').listen();
+
+                spaceSlider.onFinishChange(function(value) {
+                    updateSections();
+                })
+                speedSlider.onChange(function(value) {
+                    countplus = value;
+                })
+                dispBox.onChange(function(value) {
+                    if (value == false) {
+                        svgName.attr("height", 0)
+                    } else {
+                        svgName.transition().duration(200).attr("height", window.innerHeight * .2)
+                    }
+                })
+
+
+                //create svg for contour paths
+                svgName = d3.select(".dg").selectAll(".main").select("ul").append("svg")
+                    .attr("width", window.innerHeight * .2)
+                    .attr("height", window.innerHeight * .2)
+                    .attr("id", "secs")
+            }
+
+
+
+            function init() {
+                container = document.createElement('div');
+                document.body.appendChild(container);
+
+                camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 50, 2000);
+                camera.position.y = 85;
+                camera.position.z = 200;
+                // scene
+
+                scene = new THREE.Scene();
+
+                var ambient = new THREE.AmbientLight(0x101030);
+                //            scene.add(ambient);
+
+                var directionalLight = new THREE.DirectionalLight(0xffeedd, 0.5);
+                directionalLight.position.set(0, 0, 1);
+                scene.add(directionalLight);
+
+                hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
+                hemiLight.color.setHSL(0.6, 1, 0.6);
+                hemiLight.groundColor.setHSL(0.095, 1, 0.75);
+                hemiLight.position.set(0, 500, 0);
+                scene.add(hemiLight);
+
+                // texture
+
+                var manager = new THREE.LoadingManager();
+                manager.onProgress = function(item, loaded, total) {
+
+                };
+
+                var texture = new THREE.Texture();
+
+                var onProgress = function(xhr) {
+                    if (xhr.lengthComputable) {
+                        var percentComplete = xhr.loaded / xhr.total * 100;
+                        console.log(Math.round(percentComplete, 2) + '% downloaded');
+                    }
+                };
+
+                var onError = function(xhr) {};
+
+
+                var loader = new THREE.ImageLoader(manager);
+
+
+                // model
+
+                var loader = new THREE.OBJLoader(manager);
+                loader.load('../models/obj/bunny2.obj', function(object) {
+
+                    object.traverse(function(child) {
+
+                        if (child instanceof THREE.Mesh) {
+                            geo = (new THREE.Geometry().fromBufferGeometry(child.geometry));
+                            mesh = new THREE.Mesh(geo, child.material)
+                                //							child.material.map = texture;
+
+                        }
+
+                    });
+                    mesh.material.side = THREE.DoubleSide
+                        //                updateSections();
+
+                }, onProgress, onError);
+
+                renderer = new THREE.WebGLRenderer();
+                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                container.appendChild(renderer.domElement);
+
+                document.addEventListener('mousemove', onDocumentMouseMove, false);
+                window.addEventListener('resize', onWindowResize, false);
+            }
+
+            function updateSections() {
+                //remove previous meshes from scene
+                if (scenemesh != undefined) {
+                    scene.remove(scenemesh);
+                    disposeObject(scenemesh)
+                    scene.remove(bb.box)
+                }
+
+                var normalVector = new THREE.Vector3(1, 0, 0);
+                //rotate angle of bounding box
+                normalVector.applyAxisAngle(new THREE.Vector3(0, 1, 0), counter);
+                normalVector.normalize();
+                //set extrusion settings for sections
+                var extrudeSettings = {
+                    amount: dashboard.Spacing,
+                    bevelEnabled: false,
+                    steps: 1
+                };
+                //set line material for edges
+                var materialLine = new THREE.LineBasicMaterial({
+                    color: 0xffffff
+                });
+                //define bounding box by plane or normal vector
+                bb = new MODE.boundingBox(mesh.geometry, normalVector);
+
+                //get min and max of bounding box
+                var max = Math.max(Math.max(bb.bbox.max.z, bb.bbox.max.y), bb.bbox.max.x);
+                var min = Math.min(Math.min(bb.bbox.min.z, bb.bbox.min.y), bb.bbox.min.x);
+
+                //define planes
+                var planes = [];
+                for (var i = min; i < max; i += dashboard.Spacing) {
+                    var plane = new THREE.Plane(normalVector, -i);
+                    planes.push(plane)
+                }
+                //intersect planes with mesh
+                intersects = new MODE.planeIntersect(mesh.geometry, planes);
+
+                //create extruded sections
+                sections = intersects.extrude(mesh.material, extrudeSettings)
+                    //create surfaces
+                srfs = intersects.surface(mesh.material)
+                    //create edges
+                lines = intersects.wireframe(materialLine)
+
+                //get mins and maxes for svg
+                if (dashboard.Display_SVG == true && d3.selectAll(".closed")[0].length == 0) {
+                    var boxvals = [bb.bbox.min.x, bb.bbox.max.x, bb.bbox.min.y, bb.bbox.max.y, bb.bbox.min.z, bb.bbox.max.z];
+
+                    svgName.transition().duration(200).attr("height", window.innerHeight * .2)
+
+                    //create svg from contours
+                    intersects.toSVG(svgName, boxvals);
+
+                } else {
                     svgName.attr("height", 0)
                 }
-                else{
-                    svgName.transition().duration(200).attr("height", window.innerHeight * .2)
+
+
+
+                //chooose which option gets added to the scene
+                if (dashboard.Contour_Style == "Sections") {
+                    scenemesh = sections;
+                } else if (dashboard.Contour_Style == "Surfaces") {
+                    scenemesh = srfs;
+                } else if (dashboard.Contour_Style == "Edges") {
+                    scenemesh = lines;
                 }
-            })
-            
-            
-            //create svg for contour paths
-            svgName = d3.select(".dg").selectAll(".main").select("ul").append("svg")
-                .attr("width", window.innerHeight * .2)
-                .attr("height", window.innerHeight * .2)
-                .attr("id", "secs")
-        }
 
-
-
-        function init() {
-            container = document.createElement('div');
-            document.body.appendChild(container);
-
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 50, 2000);
-            camera.position.y = 85;
-            camera.position.z = 200;
-            // scene
-
-            scene = new THREE.Scene();
-
-            var ambient = new THREE.AmbientLight(0x101030);
-//            scene.add(ambient);
-
-            var directionalLight = new THREE.DirectionalLight(0xffeedd,0.5);
-            directionalLight.position.set(0, 0, 1);
-            scene.add(directionalLight);
-            
-            hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
-				hemiLight.color.setHSL( 0.6, 1, 0.6 );
-				hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
-				hemiLight.position.set( 0, 500, 0 );
-				scene.add( hemiLight );
-
-            // texture
-
-            var manager = new THREE.LoadingManager();
-            manager.onProgress = function(item, loaded, total) {
-
-            };
-
-            var texture = new THREE.Texture();
-
-            var onProgress = function(xhr) {
-                if (xhr.lengthComputable) {
-                    var percentComplete = xhr.loaded / xhr.total * 100;
-                    console.log(Math.round(percentComplete, 2) + '% downloaded');
-                }
-            };
-
-            var onError = function(xhr) {};
-
-
-            var loader = new THREE.ImageLoader(manager);
-            
-
-            // model
-
-            var loader = new THREE.OBJLoader(manager);
-            loader.load('../models/obj/bunny2.obj', function(object) {
-
-                object.traverse(function(child) {
-
-                    if (child instanceof THREE.Mesh) {
-                        geo = (new THREE.Geometry().fromBufferGeometry(child.geometry));
-                        mesh = new THREE.Mesh(geo, child.material)
-                            //							child.material.map = texture;
-
-                    }
-
-                });
-                mesh.material.side = THREE.DoubleSide
-                    //                updateSections();
-
-            }, onProgress, onError);
-
-            renderer = new THREE.WebGLRenderer();
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            container.appendChild(renderer.domElement);
-
-            document.addEventListener('mousemove', onDocumentMouseMove, false);
-            window.addEventListener('resize', onWindowResize, false);
-        }
-
-        function updateSections() {
-            //remove previous meshes from scene
-            if (scenemesh != undefined) {
-                scene.remove(scenemesh);
-                disposeObject(scenemesh)
-                scene.remove(bb.box)
+                //add bounding box and scenemesh to scene
+                scene.add(bb.box);
+                scene.add(scenemesh);
             }
 
-            var normalVector = new THREE.Vector3(1,0,0);
-            //rotate angle of bounding box
-            normalVector.applyAxisAngle(new THREE.Vector3(0, 1, 0), counter);
-            normalVector.normalize();
-            //set extrusion settings for sections
-            var extrudeSettings = {
-                amount: dashboard.Spacing,
-                bevelEnabled: false,
-                steps: 1
-            };
-            //set line material for edges
-            var materialLine = new THREE.LineBasicMaterial({
-                color: 0xffffff
-            });
-            //define bounding box by plane or normal vector
-            bb = new MODE.boundingBox(mesh.geometry, normalVector);
+            function onWindowResize() {
 
-            //get min and max of bounding box
-            var max = Math.max(Math.max(bb.bbox.max.z, bb.bbox.max.y), bb.bbox.max.x);
-            var min = Math.min(Math.min(bb.bbox.min.z, bb.bbox.min.y), bb.bbox.min.x);
+                windowHalfX = window.innerWidth / 2;
+                windowHalfY = window.innerHeight / 2;
 
-            //define planes
-            var planes = [];
-            for (var i = min; i < max; i += dashboard.Spacing) {
-                var plane = new THREE.Plane(normalVector, -i);
-                planes.push(plane)
-            }
-            //intersect planes with mesh
-            intersects = new MODE.planeIntersect(mesh.geometry, planes);
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
 
-            //create extruded sections
-            sections = intersects.extrude(mesh.material, extrudeSettings)
-                //create surfaces
-            srfs = intersects.surface(mesh.material)
-                //create edges
-            lines = intersects.wireframe(materialLine)
+                renderer.setSize(window.innerWidth, window.innerHeight);
 
-            //get mins and maxes for svg
-            if (dashboard.Display_SVG == true && d3.selectAll(".closed")[0].length == 0) {
-                var boxvals = [bb.bbox.min.x, bb.bbox.max.x, bb.bbox.min.y, bb.bbox.max.y, bb.bbox.min.z, bb.bbox.max.z];
-
-                svgName.transition().duration(200).attr("height", window.innerHeight * .2)
-
-                //create svg from contours
-                intersects.toSVG(svgName, boxvals);
-                
-            } else {
-                svgName.attr("height", 0)
             }
 
+            function onDocumentMouseMove(event) {
 
+                mouseX = (event.clientX - windowHalfX) / 2;
+                mouseY = (event.clientY - windowHalfY) / 2;
 
-            //chooose which option gets added to the scene
-            if (dashboard.Contour_Style == "Sections") {
-                scenemesh = sections;
-            } else if (dashboard.Contour_Style == "Surfaces") {
-                scenemesh = srfs;
-            } else if (dashboard.Contour_Style == "Edges") {
-                scenemesh = lines;
             }
 
-            //add bounding box and scenemesh to scene
-            scene.add(bb.box);
-            scene.add(scenemesh);
-        }
+            function animate() {
 
-        function onWindowResize() {
+                requestAnimationFrame(animate);
+                render();
 
-            windowHalfX = window.innerWidth / 2;
-            windowHalfY = window.innerHeight / 2;
+            }
 
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
+            function render() {
 
-            renderer.setSize(window.innerWidth, window.innerHeight);
 
-        }
 
-        function onDocumentMouseMove(event) {
-
-            mouseX = (event.clientX - windowHalfX) / 2;
-            mouseY = (event.clientY - windowHalfY) / 2;
-
-        }
-        
-        function animate() {
-
-            requestAnimationFrame(animate);
-            render();
-
-        }
-
-        function render() {
-            
-            
-
-            if (mesh != undefined) {
-                if (dashboard != undefined) {
-                    if (dashboard.Animate == true && dashboard.Speed > 0) {
-                        counter += countplus
-                        updateSections()
+                if (mesh != undefined) {
+                    if (dashboard != undefined) {
+                        if ((dashboard.Animate == true && dashboard.Speed > 0)||counter==0) {
+                            counter += countplus
+                            updateSections()
+                        }
                     }
                 }
+                camera.position.x += (mouseX - camera.position.x) * .05;
+
+                camera.lookAt(scene.position);
+
+                renderer.render(scene, camera);
             }
-            camera.position.x += (mouseX - camera.position.x) * .05;
-
-            camera.lookAt(scene.position);
-
-            renderer.render(scene, camera);
         }
-
     </script>
 
 </body>
