@@ -24,6 +24,8 @@ var bb = new MODE.boundingBox(mesh.geometry, normalVector);
 ### Examples
 Example files are in the <a href="https://github.com/modelab/mode.js/tree/master/examples" target="_blank">examples</a> directory for this repo.  Additional demos are posted periodically on <a href="http://executable.io/" target="_blank">http://executable.io/</a>.
 
+<li><a href="http://executable.io/2016/03/25/mode-js-bounding-box-and-plane-intersection/" target="_blank">Example_01</a></li>
+
 ### Documentation
 In-progress documentation is currently stored <a href="http://executable.io/html/mode-js/doc/MODE.html" target="_blank">here</a>.
 
